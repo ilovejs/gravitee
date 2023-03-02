@@ -7,10 +7,11 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/phyber/negroni-gzip/gzip"
+	"github.com/urfave/negroni"
+	"gopkg.in/tylerb/graceful.v1" // graceful
+
 	"github.com/spring2go/gravitee/log"
 	"github.com/spring2go/gravitee/services"
-	"github.com/urfave/negroni"
-	graceful "gopkg.in/tylerb/graceful.v1"
 )
 
 // RunServer runs the app
@@ -47,6 +48,7 @@ func RunServer(configFile string) error {
 	app.UseHandler(router)
 
 	log.INFO.Println("Starting gravitee server on port ", cfg.ServerPort)
+
 	// Run the server on $ServerPort, gracefully stop on SIGTERM signal
 	graceful.Run(":"+strconv.Itoa(cfg.ServerPort), 5*time.Second, app)
 

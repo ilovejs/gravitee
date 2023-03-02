@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"github.com/gorilla/mux"
+
 	"github.com/spring2go/gravitee/util/routes"
 )
 
@@ -15,7 +16,11 @@ const (
 // RegisterRoutes registers route handlers for the oauth service
 func (s *Service) RegisterRoutes(router *mux.Router, prefix string) {
 	subRouter := router.PathPrefix(prefix).Subrouter()
-	routes.AddRoutes(s.GetRoutes(), subRouter)
+
+	routes.AddRoutes(
+		s.GetRoutes(), // slices of route
+		subRouter,
+	)
 }
 
 // GetRoutes returns []routes.Route slice for the oauth service

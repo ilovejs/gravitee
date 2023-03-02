@@ -34,12 +34,13 @@ Go语言实现的轻量级OAuth2服务器，为极客时间课程《微服务架
 ### 步骤一、下载源码并导入依赖
 
 ```
-glide install
+go mod tidy
 ```
 
 ### 步骤二、构建服务器
 
 ```
+go build
 go build gravitee-server.go
 ```
 
@@ -60,7 +61,7 @@ go build gravitee-server.go
 运行
 
 ```
-./gravitee-server migrate
+./gravitee migrate
 ```
 校验数据库中users/clients/tokens等相关表格已经正确创建。**注意**，migrate动作只需在初始化时做一次。
 
@@ -69,7 +70,7 @@ go build gravitee-server.go
 运行
 
 ```
-./gravitee-server loaddata oauth/fixtures/scopes.yml oauth/fixtures/roles.yml oauth/fixtures/test_clients.yml oauth/fixtures/test_users.yml
+./gravitee loaddata oauth/fixtures/scopes.yml oauth/fixtures/roles.yml oauth/fixtures/test_clients.yml oauth/fixtures/test_users.yml
 ```
 查看users/clients/scopes/roles等表中已经有测试用种子数据
 
@@ -78,7 +79,7 @@ go build gravitee-server.go
 运行
 
 ```
-./gravitee-server runserver 
+./gravitee runserver 
 ```
 
 **注意**，服务器默认启动在8080端口，如需可在配置文件`config.yml`中修改，上述安装步骤可以同时参考[Gravitee Lab](https://github.com/spring2go/gravitee_lab)。
@@ -91,11 +92,13 @@ go build gravitee-server.go
 
 通过浏览器发起授权码请求：
 
+[step1](http://localhost:8080/web/authorize?client_id=test_client_1&redirect_uri=https://www.example.com&response_type=code&state=somestate&scope=read_write)
+
 ```
 http://localhost:8080/web/authorize?client_id=test_client_1&redirect_uri=https://www.example.com&response_type=code&state=somestate&scope=read_write
 ```
 
-提示用户登录，可以采用种子用户数据(test@user/test_password)登录：
+提示用户登录，可以采用种子用户数据( test@user / test_password )登录：
 
 ![login](images/login.png)
 
@@ -166,24 +169,24 @@ Gravitee的数据模型也不复杂，核心概念是：
 
 Gravitee的源码不多也不复杂，一般的中高级研发人员不难看懂。我这边再把主要的目录结构梳理一下，方便大家阅读理解源码，见下表：
 
-主要目录和文件|简析
----------|---------
-cmd      | 一些命令入口文件，如导入种子数据，数据库升级(包括第一次创建数据库表)和启动服务器
-config   | 服务器配置相关支持类，配置有数据库配置、OAuth2服务配置和Session相关配置等
-database | 负责建立和获取数据库连接的支持文件
-health   | 暴露健康检查端点的服务
-log      | 日志相关支持类
-models   | 数据模型和ORM(使用[gorm](https://github.com/jinzhu/gorm))相关支持文件，OAuth2核心数据模型在这里
-oauth    | 封装OAuth2的核心流程逻辑，并暴露服务接口和HTTP端点，这是最复杂的一个文件夹
-public   | 静态css文件
-services | 服务初始化和入口文件，类似一个service registry
-session  | Web Session相关的服务封装支持类
-test-util| 测试相关支持类
-user     | 暴露用户创建端点的服务
-util     | 项目中用到的工具类
-vendor   | 第三方依赖包，由[glide](https://github.com/Masterminds/glide)依赖工具导入
-web      | web模块的实现类，支持授权、注册、登录和登出的Web流程逻辑，同时依赖`OAuth2`和`Session`模块提供的服务
-gravitee-server.go | 服务器程序主入口(main)，使用`cmd`目录内的命令执行具体任务。
+| 主要目录和文件            | 简析                                                                       |
+|--------------------|--------------------------------------------------------------------------|
+| cmd                | 一些命令入口文件，如导入种子数据，数据库升级(包括第一次创建数据库表)和启动服务器                                |
+| config             | 服务器配置相关支持类，配置有数据库配置、OAuth2服务配置和Session相关配置等                              |
+| database           | 负责建立和获取数据库连接的支持文件                                                        |
+| health             | 暴露健康检查端点的服务                                                              |
+| log                | 日志相关支持类                                                                  |
+| models             | 数据模型和ORM(使用[gorm](https://github.com/jinzhu/gorm))相关支持文件，OAuth2核心数据模型在这里 |
+| oauth              | 封装OAuth2的核心流程逻辑，并暴露服务接口和HTTP端点，这是最复杂的一个文件夹                               |
+| public             | 静态css文件                                                                  |
+| services           | 服务初始化和入口文件，类似一个service registry                                          |
+| session            | Web Session相关的服务封装支持类                                                    |
+| test-util          | 测试相关支持类                                                                  |
+| user               | 暴露用户创建端点的服务                                                              |
+| util               | 项目中用到的工具类                                                                |
+| vendor             | 第三方依赖包，由[glide](https://github.com/Masterminds/glide)依赖工具导入              |
+| web                | web模块的实现类，支持授权、注册、登录和登出的Web流程逻辑，同时依赖`OAuth2`和`Session`模块提供的服务            |
+| gravitee-server.go | 服务器程序主入口(main)，使用`cmd`目录内的命令执行具体任务。                                      |
 
 程序的服务结构代码可以参考最简单的健康检查`health`模块(在health文件夹内)，其它的服务模块，如oauth/web/session/user等，都是采用类似的服务结构开发。在`web`模块中，为了支持登录授权，采用了[gorilla session](https://github.com/gorilla/sessions)做临时状态存储(暂使用客户端session)，也采用了golang http的middleware中间件拦截机制，这样登录授权流程才能穿起来，相关逻辑稍复杂，但是也不难看懂。
 

@@ -2,9 +2,12 @@ package oauth
 
 import (
 	"github.com/jinzhu/gorm"
+
 	"github.com/spring2go/gravitee/config"
 	"github.com/spring2go/gravitee/oauth/roles"
 )
+
+// program only have one service interface and struct...
 
 // Service struct keeps objects to avoid passing them around
 type Service struct {

@@ -7,12 +7,13 @@ import (
 	"time"
 
 	"github.com/RichardKnop/uuid"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/spring2go/gravitee/models"
 	"github.com/spring2go/gravitee/oauth"
 	"github.com/spring2go/gravitee/oauth/tokentypes"
 	"github.com/spring2go/gravitee/test-util"
 	"github.com/spring2go/gravitee/util"
-	"github.com/stretchr/testify/assert"
 )
 
 func (suite *OauthTestSuite) TestAuthorizationCodeGrantEmptyNotFound() {

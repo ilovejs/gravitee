@@ -2,9 +2,9 @@ database:
   type: mysql
   host: localhost
   port: 3306
-  user: root
-  password: root
-  databasename: gravitee
+  user: user
+  password: password
+  databasename: db
   maxidleconns: 5
   maxopenconns: 5
 oauth:

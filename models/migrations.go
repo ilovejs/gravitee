@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
+
 	"github.com/spring2go/gravitee/util/migrations"
 )
 
@@ -53,7 +54,7 @@ func migrate0001(db *gorm.DB, name string) error {
 		"RESTRICT", "RESTRICT",
 	).Error
 	if err != nil {
-		return fmt.Errorf("Error creating foreign key on "+
+		return fmt.Errorf("error creating foreign key on "+
 			"oauth_users.role_id for oauth_roles(id): %s", err)
 	}
 	err = db.Model(new(OauthRefreshToken)).AddForeignKey(
@@ -61,7 +62,7 @@ func migrate0001(db *gorm.DB, name string) error {
 		"RESTRICT", "RESTRICT",
 	).Error
 	if err != nil {
-		return fmt.Errorf("Error creating foreign key on "+
+		return fmt.Errorf("error creating foreign key on "+
 			"oauth_refresh_tokens.client_id for oauth_clients(id): %s", err)
 	}
 	err = db.Model(new(OauthRefreshToken)).AddForeignKey(
@@ -69,7 +70,7 @@ func migrate0001(db *gorm.DB, name string) error {
 		"RESTRICT", "RESTRICT",
 	).Error
 	if err != nil {
-		return fmt.Errorf("Error creating foreign key on "+
+		return fmt.Errorf("error creating foreign key on "+
 			"oauth_refresh_tokens.user_id for oauth_users(id): %s", err)
 	}
 	err = db.Model(new(OauthAccessToken)).AddForeignKey(
@@ -77,7 +78,7 @@ func migrate0001(db *gorm.DB, name string) error {
 		"RESTRICT", "RESTRICT",
 	).Error
 	if err != nil {
-		return fmt.Errorf("Error creating foreign key on "+
+		return fmt.Errorf("error creating foreign key on "+
 			"oauth_access_tokens.client_id for oauth_clients(id): %s", err)
 	}
 	err = db.Model(new(OauthAccessToken)).AddForeignKey(
@@ -85,7 +86,7 @@ func migrate0001(db *gorm.DB, name string) error {
 		"RESTRICT", "RESTRICT",
 	).Error
 	if err != nil {
-		return fmt.Errorf("Error creating foreign key on "+
+		return fmt.Errorf("error creating foreign key on "+
 			"oauth_access_tokens.user_id for oauth_users(id): %s", err)
 	}
 	err = db.Model(new(OauthAuthorizationCode)).AddForeignKey(
@@ -93,7 +94,7 @@ func migrate0001(db *gorm.DB, name string) error {
 		"RESTRICT", "RESTRICT",
 	).Error
 	if err != nil {
-		return fmt.Errorf("Error creating foreign key on "+
+		return fmt.Errorf("error creating foreign key on "+
 			"oauth_authorization_codes.client_id for oauth_clients(id): %s", err)
 	}
 	err = db.Model(new(OauthAuthorizationCode)).AddForeignKey(
@@ -101,7 +102,7 @@ func migrate0001(db *gorm.DB, name string) error {
 		"RESTRICT", "RESTRICT",
 	).Error
 	if err != nil {
-		return fmt.Errorf("Error creating foreign key on "+
+		return fmt.Errorf("error creating foreign key on "+
 			"oauth_authorization_codes.user_id for oauth_users(id): %s", err)
 	}
 

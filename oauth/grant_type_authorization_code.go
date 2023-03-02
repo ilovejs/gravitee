@@ -10,7 +10,7 @@ import (
 
 var (
 	// ErrInvalidRedirectURI ...
-	ErrInvalidRedirectURI = errors.New("Invalid redirect URI")
+	ErrInvalidRedirectURI = errors.New("invalid redirect URI")
 )
 
 func (s *Service) authorizationCodeGrant(r *http.Request, client *models.OauthClient) (*AccessTokenResponse, error) {

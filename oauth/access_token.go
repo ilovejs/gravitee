@@ -7,7 +7,12 @@ import (
 )
 
 // GrantAccessToken deletes old tokens and grants a new access token
-func (s *Service) GrantAccessToken(client *models.OauthClient, user *models.OauthUser, expiresIn int, scope string) (*models.OauthAccessToken, error) {
+func (s *Service) GrantAccessToken(
+	client *models.OauthClient,
+	user *models.OauthUser,
+	expiresIn int,
+	scope string,
+) (*models.OauthAccessToken, error) {
 	// Begin a transaction
 	tx := s.db.Begin()
 
@@ -18,7 +23,9 @@ func (s *Service) GrantAccessToken(client *models.OauthClient, user *models.Oaut
 	} else {
 		query = query.Where("user_id IS NULL")
 	}
-	if err := query.Where("expires_at <= ?", time.Now()).Delete(new(models.OauthAccessToken)).Error; err != nil {
+
+	if err := query.Where("expires_at <= ?", time.Now()).
+		Delete(new(models.OauthAccessToken)).Error; err != nil {
 		tx.Rollback() // rollback the transaction
 		return nil, err
 	}

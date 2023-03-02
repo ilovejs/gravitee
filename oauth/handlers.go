@@ -10,9 +10,9 @@ import (
 
 var (
 	// ErrInvalidGrantType ...
-	ErrInvalidGrantType = errors.New("Invalid grant type")
+	ErrInvalidGrantType = errors.New("invalid grant type")
 	// ErrInvalidClientIDOrSecret ...
-	ErrInvalidClientIDOrSecret = errors.New("Invalid client ID or secret")
+	ErrInvalidClientIDOrSecret = errors.New("invalid client ID or secret")
 )
 
 // tokensHandler handles all OAuth 2.0 grant types

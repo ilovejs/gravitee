@@ -6,12 +6,13 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
+	"github.com/stretchr/testify/suite"
+
 	"github.com/spring2go/gravitee/config"
 	"github.com/spring2go/gravitee/log"
 	"github.com/spring2go/gravitee/models"
 	"github.com/spring2go/gravitee/oauth"
 	"github.com/spring2go/gravitee/test-util"
-	"github.com/stretchr/testify/suite"
 )
 
 var (

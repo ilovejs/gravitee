@@ -5,15 +5,16 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+
 	"github.com/spring2go/gravitee/models"
 	"github.com/spring2go/gravitee/session"
 )
 
 var (
 	// ErrAccessTokenNotFound ...
-	ErrAccessTokenNotFound = errors.New("Access token not found")
+	ErrAccessTokenNotFound = errors.New("access token not found")
 	// ErrAccessTokenExpired ...
-	ErrAccessTokenExpired = errors.New("Access token expired")
+	ErrAccessTokenExpired = errors.New("access token expired")
 )
 
 // Authenticate checks the access token is valid
@@ -33,12 +34,15 @@ func (s *Service) Authenticate(token string) (*models.OauthAccessToken, error) {
 	}
 
 	// Extend refresh token expiration database
-	query := s.db.Model(new(models.OauthRefreshToken)).Where("client_id = ?", accessToken.ClientID.String)
+	query := s.db.Model(new(models.OauthRefreshToken)).
+		Where("client_id = ?", accessToken.ClientID.String)
+
 	if accessToken.UserID.Valid {
 		query = query.Where("user_id = ?", accessToken.UserID.String)
 	} else {
 		query = query.Where("user_id IS NULL")
 	}
+
 	increasedExpiresAt := gorm.NowFunc().Add(
 		time.Duration(s.cfg.Oauth.RefreshTokenLifetime) * time.Second,
 	)
@@ -53,14 +57,23 @@ func (s *Service) Authenticate(token string) (*models.OauthAccessToken, error) {
 func (s *Service) ClearUserTokens(userSession *session.UserSession) {
 	// Clear all refresh tokens with user_id and client_id
 	refreshToken := new(models.OauthRefreshToken)
-	found := !models.OauthRefreshTokenPreload(s.db).Where("token = ?", userSession.RefreshToken).First(refreshToken).RecordNotFound()
+
+	found := !models.OauthRefreshTokenPreload(s.db).
+		Where("token = ?", userSession.RefreshToken).
+		First(refreshToken).
+		RecordNotFound()
+
 	if found {
 		s.db.Unscoped().Where("client_id = ? AND user_id = ?", refreshToken.ClientID, refreshToken.UserID).Delete(models.OauthRefreshToken{})
 	}
 
 	// Clear all access tokens with user_id and client_id
 	accessToken := new(models.OauthAccessToken)
-	found = !models.OauthAccessTokenPreload(s.db).Where("token = ?", userSession.AccessToken).First(accessToken).RecordNotFound()
+
+	found = !models.OauthAccessTokenPreload(s.db).
+		Where("token = ?", userSession.AccessToken).
+		First(accessToken).
+		RecordNotFound()
 	if found {
 		s.db.Unscoped().Where("client_id = ? AND user_id = ?", accessToken.ClientID, accessToken.UserID).Delete(models.OauthAccessToken{})
 	}
